@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ipiblockChain
@@ -58,16 +59,25 @@ namespace ipiblockChain
                     }
                 }
                     
-
                 // Handle different endpoints
                 string response;
                 if (endpoint == "/verify" && !string.IsNullOrEmpty(blockJSON))
                 {
-                    response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nVerification result for block {blockJSON}: OK";
+                    //string json = HtmlD blockJSON, "%20", " ");
+
+                    try
+                    {
+                        Block block = Block.CreateBlock(blockJSON);
+                        response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nVerification result for block {blockJSON}: OK";
+                    }catch (Exception ex)
+                    {
+                        response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nVerification result for block {blockJSON}: OK" + "\n" + $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n {ex.Message}";
+                    }
+
                 }
                 else
                 {
-                    response = UNKNOWN_ACTION;
+                    response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nVerification result for block {UNKNOWN_ACTION}";
                 }
 
                 await writer.WriteAsync(response);
