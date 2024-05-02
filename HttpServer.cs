@@ -67,7 +67,7 @@ namespace ipiblockChain
                 }
                 else
                 {
-                    response = "UNKNOW_ACTION";
+                    response = UNKNOWN_ACTION;
                 }
 
                 await writer.WriteAsync(response);
