@@ -36,9 +36,25 @@ namespace ipiblockChain
             using (var writer = new StreamWriter(stream, Encoding.UTF8) { AutoFlush = true })
             {
                 string request = await reader.ReadLineAsync();
+                if (request == null) return;
 
-                // Just a simple response to any request
-                string response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nHello, World!";
+                string[] parts = request.Split(' ');
+                string method = parts[0];
+                string url = parts[1];
+
+                string response;
+                if (url == "/")
+                {
+                    response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nHello, World!";
+                }
+                else if (url == "/add_block")
+                {
+                    response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nAdd block.";
+                }
+                else
+                {
+                    response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\n404 Not Found";
+                }
 
                 await writer.WriteAsync(response);
             }
