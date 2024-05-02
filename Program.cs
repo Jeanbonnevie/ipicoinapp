@@ -10,7 +10,7 @@ namespace ipiblockChain
     {
         static void Main(string[] args)
         {
-            HttpServer.Init();
+            HttpServer.Init("0.0.0.0",9090);
         }
     }
 }

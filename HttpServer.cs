@@ -9,15 +9,22 @@ namespace ipiblockChain
 {
     public class HttpServer
     {
-        public static void Init()
-        {
-            var server = new HttpServer();
-            server.Start("0.0.0.0", 9090);
+        private int Port;
+        private string Addr;
+        public HttpServer(string addr, int port) {
+            this.Addr = addr;
+            this.Port = port;
         }
 
-        public void Start(string ipAddress, int port)
+        public static void Init(string Addr, int Port)
         {
-            TcpListener listener = new TcpListener(IPAddress.Parse(ipAddress), port);
+            var server = new HttpServer(Addr, Port);
+            server.Start();
+        }
+
+        public void Start()
+        {
+            TcpListener listener = new TcpListener(IPAddress.Parse(this.Addr), this.Port);
             listener.Start();
 
             while (true)
