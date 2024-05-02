@@ -13,7 +13,6 @@ namespace ipiblockChain
         const string UNKNOWN_ACTION = "UNKNOWN_ACTION";
         const string BLOCK_MISSING = "BLOCK_MISSING";
 
-        public static void Init()
         private int Port;
         private string Addr;
         public HttpServer(string addr, int port) {
