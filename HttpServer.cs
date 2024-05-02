@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -9,6 +10,9 @@ namespace ipiblockChain
 {
     public class HttpServer
     {
+        const string UNKNOWN_ACTION = "UNKNOWN_ACTION";
+        const string BLOCK_MISSING = "BLOCK_MISSING";
+
         public static void Init()
         {
             var server = new HttpServer();
@@ -63,7 +67,7 @@ namespace ipiblockChain
                 }
                 else
                 {
-                    response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\n404 Not Found";
+                    response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\nUNKNOWN_ACTION";
                 }
 
                 await writer.WriteAsync(response);
