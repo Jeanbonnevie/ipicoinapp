@@ -42,14 +42,26 @@ namespace ipiblockChain
                 string method = parts[0];
                 string url = parts[1];
 
-                string response;
-                if (url == "/")
+                string[] queryParams = url.Split('?');
+                string endpoint = queryParams[0];
+
+                string blockJSON = null;
+
+                if (queryParams.Length > 1)
                 {
-                    response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nHello, World!";
+                    string[] param = queryParams[1].Split('=');
+                    if (param.Length > 1) 
+                    {
+                        blockJSON = param[1];
+                    }
                 }
-                else if (url == "/add_block")
+                    
+
+                // Handle different endpoints
+                string response;
+                if (endpoint == "/verify" && !string.IsNullOrEmpty(blockJSON))
                 {
-                    response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nAdd block.";
+                    response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nVerification result for block {blockJSON}: OK";
                 }
                 else
                 {
@@ -61,5 +73,5 @@ namespace ipiblockChain
 
             client.Close();
         }
-    }
+    } 
 }
