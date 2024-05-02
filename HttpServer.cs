@@ -1,11 +1,10 @@
 using System;
-using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Web;
+
 
 namespace ipiblockChain
 {
@@ -70,15 +69,15 @@ namespace ipiblockChain
                 string response;
                 if (endpoint == "/verify" && !string.IsNullOrEmpty(blockJSON))
                 {
-                    //string json = HtmlD blockJSON, "%20", " ");
-
+                    blockJSON = WebUtility.UrlDecode(blockJSON);
                     try
                     {
                         Block block = Block.CreateBlock(blockJSON);
                         response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nVerification result for block {blockJSON}: OK";
                     }catch (Exception ex)
                     {
-                        response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nVerification result for block {blockJSON}: OK" + "\n" + $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n {ex.Message}";
+                        response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nVerification result for block {blockJSON}: OK" +
+                            "\n" + $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n {ex.Message}";
                     }
 
                 }
