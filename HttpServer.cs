@@ -13,8 +13,6 @@ namespace ipiblockChain
         {
             var server = new HttpServer();
             server.Start("0.0.0.0", 9090);
-            Console.WriteLine("Server started. Listening on port 9090...");
-            Console.ReadLine(); // Keeps the server running until Enter is pressed
         }
 
         public void Start(string ipAddress, int port)
