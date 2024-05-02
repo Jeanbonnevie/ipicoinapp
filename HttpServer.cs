@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -9,6 +10,10 @@ namespace ipiblockChain
 {
     public class HttpServer
     {
+        const string UNKNOWN_ACTION = "UNKNOWN_ACTION";
+        const string BLOCK_MISSING = "BLOCK_MISSING";
+
+        public static void Init()
         private int Port;
         private string Addr;
         public HttpServer(string addr, int port) {
@@ -70,7 +75,7 @@ namespace ipiblockChain
                 }
                 else
                 {
-                    response = "UNKNOW_ACTION";
+                    response = UNKNOWN_ACTION;
                 }
 
                 await writer.WriteAsync(response);
