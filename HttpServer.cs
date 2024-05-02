@@ -65,7 +65,7 @@ namespace ipiblockChain
                 }
                 else
                 {
-                    response = "HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\n404 Not Found";
+                    response = "UNKNOW_ACTION";
                 }
 
                 await writer.WriteAsync(response);
