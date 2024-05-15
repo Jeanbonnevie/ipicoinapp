@@ -53,6 +53,7 @@ namespace ipiblockChain
 
                 genesisBlock.AddTransaction(new List<Transaction>() { firstTransaction});
                 genesisBlock.GenNonce();
+                this.blocks.Add(genesisBlock);
                 SaveBlockchain();
             }
         }
