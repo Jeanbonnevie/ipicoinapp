@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
 
@@ -16,6 +17,8 @@ namespace ipiblockChain
 
         private int Port;
         private string Addr;
+
+        public static event Action<Transaction> OnNewTransactionReceived;
         public HttpServer(string addr, int port) {
             this.Addr = addr;
             this.Port = port;
