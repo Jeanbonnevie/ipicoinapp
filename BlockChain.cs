@@ -55,7 +55,7 @@ namespace ipiblockChain
                     timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 };
 
-                genesisBlock.AddTransaction(new List<Transaction>() { firstTransaction});
+                genesisBlock.AddTransaction(firstTransaction);
                 genesisBlock.nonce = "";
                 this.blocks.Add(genesisBlock);
                 genesisBlock.id = genesisBlock.GetId();
@@ -67,8 +67,8 @@ namespace ipiblockChain
         public void InitBlock(ref Block block)
         {
             block.height = blocks.Count;
-            Console.WriteLine($"Block height :: {block.height}");
             block.prevId = blocks[(int)block.height - 1].id;
+            Console.WriteLine($"Block height :: {block.height}");
         }
 
 
@@ -97,21 +97,28 @@ namespace ipiblockChain
 
                 int zeroCondition = 0;
                 string hash = builder.ToString();
+
                 foreach(var c in hash)
                 {
-                    Console.WriteLine(c);
                     if (int.TryParse(c.ToString(), out int r))
                     {
                         if (r == 0)
+                        {
                             zeroCondition++;
+                        }
                         else
+                        {
                             break;
+                        }
                     }
+                    else
+                        break;
                 }
 
                 if(zeroCondition >= difficulty)
                 {
                     Console.WriteLine(builder.ToString());
+                    block.id = builder.ToString();
                     AddToBlockChain(block);
                     Console.WriteLine("Block added n°" + block.height);
                     return true;

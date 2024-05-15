@@ -13,21 +13,10 @@ public class Mineur
     private BlockChain currentChain;
 
     ConcurrentBag<Transaction> availibleTransaction = new ConcurrentBag<Transaction>();
-    private event Action<Block> OnBlockfound;
 
     public Mineur(BlockChain currentChain)
     {
         this.currentChain = currentChain;
-
-        OnBlockfound += block =>
-        {
-            currentBlock = block;
-
-            myThread.Abort();
-
-            myThread = new Thread(new ThreadStart(Mine));
-            myThread.Start();
-        };
 
         HttpServer.OnNewTransactionReceived += t =>
         {
@@ -47,7 +36,11 @@ public class Mineur
         bool isRunning = true;
         while (isRunning) // Pas opti DavidGoodenought
         {
-            block.AddTransaction(availibleTransaction.ToList());
+            if(availibleTransaction.TryTake(out Transaction transaction))
+            {
+                block.AddTransaction(transaction);
+            }
+
             block.GenNonce();
 
             if (block.CanBeUsed())
@@ -55,7 +48,8 @@ public class Mineur
                 if (currentChain.TryAddBlockToBlockChain(block))
                 {
                     isRunning = false;
-                    OnBlockfound?.Invoke(block);
+
+                    new Thread(new ThreadStart(Mine)).Start();
                 }
             }
         }

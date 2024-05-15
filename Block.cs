@@ -45,12 +45,12 @@ public class Block
         }
     }
 
-    public void AddTransaction(List<Transaction> transactions)
+    public void AddTransaction(Transaction transaction)
     {
-        if (data == null) data = transactions.ToArray();
-
-        int initialSize = data.Length;
-        data = transactions.ToArray();
+        int initialSize = data != null ? data.Length : 0;
+        List<Transaction> ts = data != null ? data.ToList() : new List<Transaction>();
+        ts.Add(transaction);
+        data = ts.ToArray();
 
         if (data.Length > initialSize)
             timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
