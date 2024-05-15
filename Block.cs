@@ -2,6 +2,9 @@ using System;
 using System.Collections.Concurrent;
 using Newtonsoft.Json;
 using System.Linq;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 
 [Serializable]
 public class Block
@@ -17,6 +20,51 @@ public class Block
         if (block.timestamp > DateTime.Now) throw new Exception("timestamp error");
 
         return block;
+    }
+
+    public void GenNonce()
+    {
+        using (SHA256 sha256Hash = SHA256.Create())
+        {
+            byte[] seedBytes = Encoding.UTF8.GetBytes("Gael");
+
+            // Concatenate seed with random data
+            byte[] randomBytes = new byte[16];
+            using (RandomNumberGenerator rng = new RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(randomBytes);
+            }
+            byte[] combinedBytes = new byte[seedBytes.Length + randomBytes.Length];
+            Buffer.BlockCopy(seedBytes, 0, combinedBytes, 0, seedBytes.Length);
+            Buffer.BlockCopy(randomBytes, 0, combinedBytes, seedBytes.Length, randomBytes.Length);
+
+            Console.WriteLine(sha256Hash.ComputeHash(combinedBytes).Length);
+            nonce = sha256Hash.ComputeHash(combinedBytes).ToString();
+        }
+    }
+
+    public void AddTransaction(List<Transaction> transactions)
+    {
+        if (data == null) data = transactions.ToArray();
+
+        int initialSize = data.Length;
+        List<Transaction> list = data.ToList();
+        foreach (var t in transactions)
+        {
+            if (!list.Contains(t))
+            {
+                list.Add(t);
+            }
+        }
+
+        if (list.Count > initialSize)
+            timestamp = DateTime.Now;
+    }
+
+    internal bool CanBeUsed()
+    {
+        if (data == null) return false;
+        return data.Length >= 1;
     }
 
     public string id;
