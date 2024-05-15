@@ -91,6 +91,12 @@ namespace ipiblockChain
                     block.GetBiggestBlock(block);
                     response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n {OK}";
                 }
+                else if (endpoint == "/newtx" && !string.IsNullOrEmpty(blockJSON) && command == "tx")
+                {
+                    Transaction transaction = Transaction.CreateTransaction(blockJSON);
+
+                    response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n {OK}";
+                }
                 else
                 {
                     response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n {UNKNOWN_ACTION}";
