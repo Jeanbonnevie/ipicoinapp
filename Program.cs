@@ -11,7 +11,7 @@ namespace ipiblockChain
     {
         static void Main(string[] args)
         {
-    
+            Mineur mineur = new Mineur();   
             HttpServer.Init("0.0.0.0",9090);
         }
     }

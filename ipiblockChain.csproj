@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Block.cs" />
     <Compile Include="HttpServer.cs" />
+    <Compile Include="Mineur.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transaction.cs" />
