@@ -10,7 +10,9 @@ namespace ipiblockChain
     {
         static void Main(string[] args)
         {
-            HttpServer.Init("0.0.0.0",9090);
+            BlockChain blockChain = new BlockChain();
+            Console.ReadKey();
+            //HttpServer.Init("0.0.0.0",9090);
         }
     }
 }
