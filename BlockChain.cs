@@ -5,10 +5,11 @@ using Newtonsoft.Json;
 
 namespace ipiblockChain
 {
-    internal class BlockChain
+    public class BlockChain
     {
         private string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ipiblockchain", "blockchain.json");
         private List<Block> blocks;
+        int difficulty = 2;
 
         public BlockChain()
         {
@@ -54,6 +55,19 @@ namespace ipiblockChain
                 genesisBlock.GenNonce();
                 SaveBlockchain();
             }
+        }
+
+        public int GetCurrentBlockHeight()
+        {
+            return blocks.Count;
+        }
+
+
+        public bool TryAddBlockToBlockChain(Block block)
+        {
+            //
+
+            return false;
         }
 
         public void SaveBlockchain()
