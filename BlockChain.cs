@@ -98,9 +98,10 @@ namespace ipiblockChain
                     if (c == 0) zeroCondition++;
                 });
 
-                if(zeroCondition >= 2)
+                if(zeroCondition >= difficulty)
                 {
                     AddToBlockChain(block);
+                    Console.WriteLine("Block added n°" + block.height);
                     return true;
                 }
                 else
@@ -113,24 +114,28 @@ namespace ipiblockChain
         private void AddToBlockChain(Block block)
         {
             blocks.Add(block);
+            SaveBlockchain();
+
             // Todo :: broadcast to network
         }
 
+        private static readonly Object obj = new Object();
         public void SaveBlockchain()
         {
-            // Save blockchain data to the file
-            try
+            lock (obj)
             {
-                using (StreamWriter file = File.CreateText(filePath))
+                try
                 {
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.Serialize(file, this.blocks);
+                    using (StreamWriter file = File.CreateText(filePath))
+                    {
+                        JsonSerializer serializer = new JsonSerializer();
+                        serializer.Serialize(file, this.blocks);
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error while saving blockchain data: " + ex.Message);
-                // Handle the exception as needed
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error while saving blockchain data: " + ex.Message);
+                }
             }
         }
     }
