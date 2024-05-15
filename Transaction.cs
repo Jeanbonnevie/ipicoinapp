@@ -12,11 +12,11 @@ public class Transaction
     {
         Transaction transaction = JsonConvert.DeserializeObject<Transaction>(TransactionJSON);
 
-        if (transaction.addrSender.Length != 256) throw new Exception();
-        if (transaction.addrRcpt.Length != 256) throw new Exception();
-        if (transaction.amount != 256) throw new Exception();
-        if (transaction.Sig.Length != 256) throw new Exception();
-        if (transaction.timestamp != 256) throw new Exception();
+        if (transaction.addrSender.Length != 64) throw new Exception();
+        if (transaction.addrRcpt.Length != 64) throw new Exception();
+        if (transaction.amount != 64) throw new Exception();
+        if (transaction.Sig.Length != 64) throw new Exception();
+        if (transaction.timestamp != 64) throw new Exception();
 
         return transaction;
     }

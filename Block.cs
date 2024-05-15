@@ -13,9 +13,9 @@ public class Block
     {
         Block block = JsonConvert.DeserializeObject<Block>(BlockJSON);
 
-        if (block.id.Length != 256) throw new Exception("Id error " + block.id.Length);
-        if (block.prevId.Length != 256) throw new Exception("previd error");
-        if (block.nonce.Length != 256) throw new Exception("nonce error");
+        if (block.id.Length != 64) throw new Exception("Id error " + block.id.Length);
+        if (block.prevId.Length != 64) throw new Exception("previd error");
+        if (block.nonce.Length != 64) throw new Exception("nonce error");
         if (block.height < 0 || block.height >= long.MaxValue) throw new Exception("height error");
         if (block.timestamp > DateTime.Now) throw new Exception("timestamp error");
 
@@ -26,20 +26,16 @@ public class Block
     {
         using (SHA256 sha256Hash = SHA256.Create())
         {
-            byte[] seedBytes = Encoding.UTF8.GetBytes("Gael");
+            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes("Gael Est Beau"));
+            StringBuilder builder = new StringBuilder();
 
-            // Concatenate seed with random data
-            byte[] randomBytes = new byte[16];
-            using (RandomNumberGenerator rng = new RNGCryptoServiceProvider())
+            for (int i = 0; i < bytes.Length; i++)
             {
-                rng.GetBytes(randomBytes);
+                builder.Append(bytes[i].ToString("x2"));
             }
-            byte[] combinedBytes = new byte[seedBytes.Length + randomBytes.Length];
-            Buffer.BlockCopy(seedBytes, 0, combinedBytes, 0, seedBytes.Length);
-            Buffer.BlockCopy(randomBytes, 0, combinedBytes, seedBytes.Length, randomBytes.Length);
 
-            Console.WriteLine(sha256Hash.ComputeHash(combinedBytes).Length);
-            nonce = sha256Hash.ComputeHash(combinedBytes).ToString();
+            Console.WriteLine(builder.ToString().Length);
+            nonce = builder.ToString();
         }
     }
 
