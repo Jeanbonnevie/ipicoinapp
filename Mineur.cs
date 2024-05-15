@@ -9,14 +9,16 @@ using System.Threading.Tasks;
 public class Mineur
 {
     Thread myThread = null;
-    int difficulty = 2;
     Block currentBlock;
+    private BlockChain currentChain;
 
     ConcurrentBag<Transaction> availibleTransaction = new ConcurrentBag<Transaction>();
     private event Action<Block> OnBlockfound;
 
-    public Mineur()
+    public Mineur(BlockChain currentChain)
     {
+        this.currentChain = currentChain;
+
         OnBlockfound += block =>
         {
             currentBlock = block;
@@ -34,11 +36,14 @@ public class Mineur
 
         myThread = new Thread(new ThreadStart(Mine));
         myThread.Start();
+        this.currentChain = currentChain;
     }
 
     public void Mine()
     {
         Block block = new Block();
+        block.height = currentChain.GetCurrentBlockHeight();
+
         bool isRunning = true;
         while (isRunning)
         {
@@ -47,9 +52,11 @@ public class Mineur
 
             if (block.CanBeUsed())
             {
-                // TestHash with blocj cahin
-                isRunning = false;
-                OnBlockfound?.Invoke(block);
+                if (currentChain.TryAddBlockToBlockChain(block))
+                {
+                    isRunning = false;
+                    OnBlockfound?.Invoke(block);
+                }
             }
         }
     }
