@@ -14,7 +14,6 @@ namespace ipiblockChain
             BlockChain blockchain = new BlockChain();
             Mineur mineur = new Mineur(blockchain);   
             HttpServer.Init("0.0.0.0",9090);
-            BlockChain blockChain = new BlockChain();
         }
     }
 }

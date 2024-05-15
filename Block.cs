@@ -34,7 +34,6 @@ public class Block
                 builder.Append(bytes[i].ToString("x2"));
             }
 
-            Console.WriteLine(builder.ToString().Length);
             nonce = builder.ToString();
         }
     }

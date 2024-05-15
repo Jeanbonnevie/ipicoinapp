@@ -46,7 +46,7 @@ namespace ipiblockChain
                 // If the file doesn't exist, initialize a new blockchain with the first zero block
                 this.blocks = new List<Block>();
 
-                Transaction firstTransaction = Transaction.CreateNewTransaction("void", "0000", 10000, long.Parse(DateTime.Now.ToString()), "0000");
+                Transaction firstTransaction = Transaction.CreateNewTransaction("void", "0000", 10000, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), "0000");
 
                 Block genesisBlock = new Block()
                 {
@@ -57,6 +57,7 @@ namespace ipiblockChain
 
                 genesisBlock.AddTransaction(new List<Transaction>() { firstTransaction});
                 genesisBlock.GenNonce();
+                this.blocks.Add(genesisBlock);
                 SaveBlockchain();
             }
         }
