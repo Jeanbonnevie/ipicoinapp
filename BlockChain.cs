@@ -46,13 +46,13 @@ namespace ipiblockChain
                 // If the file doesn't exist, initialize a new blockchain with the first zero block
                 this.blocks = new List<Block>();
 
-                Transaction firstTransaction = Transaction.CreateNewTransaction("void", "0000", 10000, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), "0000");
+                Transaction firstTransaction = Transaction.CreateNewTransaction("void", "3436C778A660A2A06F73F9AB7BF090BF40CE3F79", 10000, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 
                 Block genesisBlock = new Block()
                 {
                     
                     height = 0,
-                    timestamp = DateTime.Now,
+                    timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 };
 
                 genesisBlock.AddTransaction(new List<Transaction>() { firstTransaction});
@@ -97,6 +97,8 @@ namespace ipiblockChain
                 {
                     if (c == 0) zeroCondition++;
                 });
+
+                Console.WriteLine(builder.ToString());
 
                 if(zeroCondition >= difficulty)
                 {

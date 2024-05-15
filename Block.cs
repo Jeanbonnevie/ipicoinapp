@@ -17,7 +17,7 @@ public class Block
         if (block.prevId.Length != 64) throw new Exception("previd error");
         if (block.nonce.Length != 64) throw new Exception("nonce error");
         if (block.height < 0 || block.height >= long.MaxValue) throw new Exception("height error");
-        if (block.timestamp > DateTime.Now) throw new Exception("timestamp error");
+        if (block.timestamp > DateTimeOffset.UtcNow.ToUnixTimeSeconds()) throw new Exception("timestamp error");
 
         return block;
     }
@@ -53,7 +53,7 @@ public class Block
         }
 
         if (list.Count > initialSize)
-            timestamp = DateTime.Now;
+            timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
     }
 
     internal bool CanBeUsed()
@@ -67,7 +67,7 @@ public class Block
     public Transaction[] data;
     public string nonce;
     public long height;
-    public DateTime timestamp;
+    public long timestamp;
 }
 
 public static class BlockEntensions

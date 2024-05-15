@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Web;
 
 
@@ -34,6 +35,12 @@ namespace ipiblockChain
         {
             TcpListener listener = new TcpListener(IPAddress.Parse(this.Addr), this.Port);
             listener.Start();
+
+            Thread myThread = null;
+            myThread = new Thread(() => {
+                while (true) { OnNewTransactionReceived?.Invoke(Transaction.CreateRandomTransaction()); }
+            });
+            myThread.Start();
 
             while (true)
             {
