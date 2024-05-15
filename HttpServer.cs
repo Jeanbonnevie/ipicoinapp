@@ -54,11 +54,14 @@ namespace ipiblockChain
                 string[] queryParams = url.Split('?');
                 string endpoint = queryParams[0];
 
+
                 string blockJSON = null;
+                string command = "";
 
                 if (queryParams.Length > 1)
                 {
                     string[] param = queryParams[1].Split('=');
+                    command = queryParams[0];
                     if (param.Length > 1) 
                     {
                         blockJSON = param[1];
@@ -67,7 +70,7 @@ namespace ipiblockChain
                     
                 // Handle different endpoints
                 string response;
-                if (endpoint == "/verify" && !string.IsNullOrEmpty(blockJSON))
+                if (endpoint == "/verify" && !string.IsNullOrEmpty(blockJSON) && command == "block")
                 {
                     blockJSON = WebUtility.UrlDecode(blockJSON);
                     try
@@ -79,6 +82,10 @@ namespace ipiblockChain
                         response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nVerification result for block {blockJSON}: OK" +
                             "\n" + $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n {ex.Message}";
                     }
+
+                }
+                else if (endpoint == "/newblock" && !string.IsNullOrEmpty(blockJSON) && command == "block")
+                {
 
                 }
                 else
