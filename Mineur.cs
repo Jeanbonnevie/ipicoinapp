@@ -42,7 +42,7 @@ public class Mineur
     public void Mine()
     {
         Block block = new Block();
-        currentChain.InitBlock(block);
+        currentChain.InitBlock(ref block);
 
         bool isRunning = true;
         while (isRunning) // Pas opti DavidGoodenought

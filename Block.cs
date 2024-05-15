@@ -13,7 +13,7 @@ public class Block
     {
         Block block = JsonConvert.DeserializeObject<Block>(BlockJSON);
 
-        if (block.id.Length != 64) throw new Exception("Id error " + block.id.Length);
+        if (block.id.Length != 64 && block.id.Length != 0) throw new Exception("Id error " + block.id.Length);
         if (block.prevId.Length != 64) throw new Exception("previd error");
         if (block.nonce.Length != 64) throw new Exception("nonce error");
         if (block.height < 0 || block.height >= long.MaxValue) throw new Exception("height error");
@@ -22,11 +22,18 @@ public class Block
         return block;
     }
 
+    private static Random random = new Random();
+
     public void GenNonce()
     {
         using (SHA256 sha256Hash = SHA256.Create())
         {
-            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes("Gael Est Beau"));
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            byte[] bytes = sha256Hash.ComputeHash(
+                Encoding.UTF8.GetBytes(new string(Enumerable.Repeat(chars, 10)
+                    .Select(s => s[random.Next(s.Length)]).ToArray()))
+                );
+
             StringBuilder builder = new StringBuilder();
 
             for (int i = 0; i < bytes.Length; i++)
@@ -43,17 +50,34 @@ public class Block
         if (data == null) data = transactions.ToArray();
 
         int initialSize = data.Length;
-        List<Transaction> list = data.ToList();
-        foreach (var t in transactions)
-        {
-            if (!list.Contains(t))
-            {
-                list.Add(t);
-            }
-        }
+        data = transactions.ToArray();
 
-        if (list.Count > initialSize)
+        if (data.Length > initialSize)
             timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+    }
+
+    public string GetId()
+    {
+        var sz = JsonConvert.SerializeObject(this);
+
+        using (SHA256 sha256Hash = SHA256.Create())
+        {
+            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(sz));
+            StringBuilder builder = new StringBuilder();
+
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                builder.Append(bytes[i].ToString("x2"));
+            }
+
+            int zeroCondition = 0;
+            builder.ToString().ToList().ForEach(c =>
+            {
+                if (c == 0) zeroCondition++;
+            });
+            
+            return builder.ToString();
+        }
     }
 
     internal bool CanBeUsed()
@@ -62,10 +86,10 @@ public class Block
         return data.Length >= 1;
     }
 
-    public string id;
-    public string prevId;
+    public string id = "";
+    public string prevId = "";
     public Transaction[] data;
-    public string nonce;
+    public string nonce = "";
     public long height;
     public long timestamp;
 }

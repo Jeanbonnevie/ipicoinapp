@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
 using System.Linq;
+using System.Security.Principal;
 
 namespace ipiblockChain
 {
@@ -49,22 +50,24 @@ namespace ipiblockChain
                 Transaction firstTransaction = Transaction.CreateNewTransaction("void", "3436C778A660A2A06F73F9AB7BF090BF40CE3F79", 10000, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 
                 Block genesisBlock = new Block()
-                {
-                    
+                {           
                     height = 0,
                     timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 };
 
                 genesisBlock.AddTransaction(new List<Transaction>() { firstTransaction});
-                genesisBlock.GenNonce();
+                genesisBlock.nonce = "";
                 this.blocks.Add(genesisBlock);
+                genesisBlock.id = genesisBlock.GetId();
                 SaveBlockchain();
+                Console.WriteLine("Block Genesis added");
             }
         }
 
-        public void InitBlock(Block block)
+        public void InitBlock(ref Block block)
         {
             block.height = blocks.Count;
+            Console.WriteLine($"Block height :: {block.height}");
             block.prevId = blocks[(int)block.height - 1].id;
         }
 
@@ -93,15 +96,22 @@ namespace ipiblockChain
                 }
 
                 int zeroCondition = 0;
-                builder.ToString().ToList().ForEach(c =>
+                string hash = builder.ToString();
+                foreach(var c in hash)
                 {
-                    if (c == 0) zeroCondition++;
-                });
-
-                Console.WriteLine(builder.ToString());
+                    Console.WriteLine(c);
+                    if (int.TryParse(c.ToString(), out int r))
+                    {
+                        if (r == 0)
+                            zeroCondition++;
+                        else
+                            break;
+                    }
+                }
 
                 if(zeroCondition >= difficulty)
                 {
+                    Console.WriteLine(builder.ToString());
                     AddToBlockChain(block);
                     Console.WriteLine("Block added n°" + block.height);
                     return true;

@@ -38,7 +38,7 @@ namespace ipiblockChain
 
             Thread myThread = null;
             myThread = new Thread(() => {
-                while (true) { OnNewTransactionReceived?.Invoke(Transaction.CreateRandomTransaction()); }
+                /*while (true)*/ { OnNewTransactionReceived?.Invoke(Transaction.CreateRandomTransaction()); }
             });
             myThread.Start();
 
