@@ -12,6 +12,7 @@ namespace ipiblockChain
     {
         const string UNKNOWN_ACTION = "UNKNOWN_ACTION";
         const string BLOCK_MISSING = "BLOCK_MISSING";
+        const string OK = "OK";
 
         private int Port;
         private string Addr;
@@ -86,11 +87,13 @@ namespace ipiblockChain
                 }
                 else if (endpoint == "/newblock" && !string.IsNullOrEmpty(blockJSON) && command == "block")
                 {
-
+                    Block block = Block.CreateBlock(blockJSON);
+                    block.GetBiggestBlock(block);
+                    response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n {OK}";
                 }
                 else
                 {
-                    response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nVerification result for block {UNKNOWN_ACTION}";
+                    response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n {UNKNOWN_ACTION}";
                 }
 
                 await writer.WriteAsync(response);
