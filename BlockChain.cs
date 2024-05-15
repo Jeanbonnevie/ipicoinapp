@@ -98,8 +98,22 @@ namespace ipiblockChain
                     if (c == 0) zeroCondition++;
                 });
 
-                return zeroCondition >= 2;
+                if(zeroCondition >= 2)
+                {
+                    AddToBlockChain(block);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
+        }
+
+        private void AddToBlockChain(Block block)
+        {
+            blocks.Add(block);
+            // Todo :: broadcast to network
         }
 
         public void SaveBlockchain()
