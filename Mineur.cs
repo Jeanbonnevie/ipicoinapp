@@ -42,10 +42,10 @@ public class Mineur
     public void Mine()
     {
         Block block = new Block();
-        block.height = currentChain.GetCurrentBlockHeight();
+        currentChain.InitBlock(block);
 
         bool isRunning = true;
-        while (isRunning)
+        while (isRunning) // Pas opti DavidGoodenought
         {
             block.AddTransaction(availibleTransaction.ToList());
             block.GenNonce();

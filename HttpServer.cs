@@ -91,7 +91,7 @@ namespace ipiblockChain
                 else if (endpoint == "/newblock" && !string.IsNullOrEmpty(blockJSON) && command == "block")
                 {
                     Block block = Block.CreateBlock(blockJSON);
-                    block.GetBiggestBlock(block);
+                    block.GetBiggestBlock(block); // todo : change to correspongin block height
                     response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n {OK}";
                 }
                 else if (endpoint == "/newtx" && !string.IsNullOrEmpty(blockJSON) && command == "tx")

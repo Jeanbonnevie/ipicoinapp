@@ -2,6 +2,10 @@
 using System.IO;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Security.Cryptography;
+using System.Security.Policy;
+using System.Text;
+using System.Linq;
 
 namespace ipiblockChain
 {
@@ -57,17 +61,44 @@ namespace ipiblockChain
             }
         }
 
-        public int GetCurrentBlockHeight()
+        public void InitBlock(Block block)
         {
-            return blocks.Count;
+            block.height = blocks.Count;
+            block.prevId = blocks[(int)block.height - 1].id;
         }
 
 
         public bool TryAddBlockToBlockChain(Block block)
         {
-            //
+            var sz = JsonConvert.SerializeObject(block);
 
-            return false;
+            try
+            {
+                Block desBlock = Block.CreateBlock(sz);
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(sz));
+                StringBuilder builder = new StringBuilder();
+
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+
+                int zeroCondition = 0;
+                builder.ToString().ToList().ForEach(c =>
+                {
+                    if (c == 0) zeroCondition++;
+                });
+
+                return zeroCondition >= 2;
+            }
         }
 
         public void SaveBlockchain()
