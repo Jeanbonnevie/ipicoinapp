@@ -15,8 +15,8 @@ public class Transaction
     {
         Transaction transaction = JsonConvert.DeserializeObject<Transaction>(TransactionJSON);
 
-        if (transaction.amount != 64) throw new Exception();
-        if (transaction.timestamp != 64) throw new Exception();
+        if (transaction.amount <= 0) throw new Exception();
+        if (transaction.timestamp > DateTimeOffset.UtcNow.ToUnixTimeSeconds()) throw new Exception();
 
         return transaction;
     }

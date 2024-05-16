@@ -43,8 +43,15 @@ namespace ipiblockChain
 
             while (true)
             {
-                TcpClient client = listener.AcceptTcpClient();
-                HandleClient(client);
+                Thread myThread = null;
+                myThread = new Thread(() => {
+                    for (int i = 0; i < 100; i++)
+                    {
+                        TcpClient client = listener.AcceptTcpClient();
+                        HandleClient(client);
+                    }
+                });
+                myThread.Start();
             }
         }
 
@@ -104,6 +111,7 @@ namespace ipiblockChain
                 }
                 else if (endpoint == "/newtx" && !string.IsNullOrEmpty(blockJSON) && command == "tx")
                 {
+                    blockJSON = WebUtility.UrlDecode(blockJSON);
                     Transaction transaction = Transaction.CreateTransaction(blockJSON);
 
                     response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n {OK}";
