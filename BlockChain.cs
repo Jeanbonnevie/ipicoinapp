@@ -14,7 +14,9 @@ namespace ipiblockChain
     {
         private string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ipiblockchain", "blockchain.json");
         private List<Block> blocks;
-        int difficulty = 2;
+        int difficulty = 4;
+
+        public event Action<Block> OnExternalBlockModifiesBlockChain;
 
         public BlockChain()
         {
@@ -154,6 +156,33 @@ namespace ipiblockChain
                 catch (Exception ex)
                 {
                     Console.WriteLine("Error while saving blockchain data: " + ex.Message);
+                }
+            }
+        }
+
+        internal void CheckBlock(Block block)
+        {
+            Block ourBlock = blocks.Find(x => x.height == block.height);
+            if(ourBlock == null)
+            {
+                blocks.Add(block);
+                OnExternalBlockModifiesBlockChain?.Invoke(block);
+            }
+            else
+            {
+                Block bestBlock = block.GetBestBlock(ourBlock);
+                if (bestBlock != ourBlock)
+                {
+                    OnExternalBlockModifiesBlockChain?.Invoke(bestBlock);
+                    if (blocks.Count - 1 > bestBlock.height)
+                    {
+                        blocks.RemoveRange((int)bestBlock.height, blocks.Count - 1);
+                        blocks.Add(bestBlock);
+                    }
+                    else
+                    {
+                        blocks.Add(bestBlock);
+                    }
                 }
             }
         }

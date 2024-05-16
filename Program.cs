@@ -13,7 +13,11 @@ namespace ipiblockChain
         {
             BlockChain blockchain = new BlockChain();
             Mineur mineur = new Mineur(blockchain);   
-            HttpServer.Init("0.0.0.0",9090);
+            HttpServer.Init("0.0.0.0",9090, blockchain);
+            Client client = new Client();
+
+            Simulator simulator = new Simulator(client);
+            simulator.SimulateTransactions();
         }
     }
 }

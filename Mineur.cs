@@ -23,6 +23,15 @@ public class Mineur
             availibleTransaction.Add(t);
         };
 
+        currentChain.OnExternalBlockModifiesBlockChain += b =>
+        {
+            //Todo :: synch transactions to never lose any
+
+            myThread.Abort();
+            myThread = new Thread(new ThreadStart(Mine));
+            myThread.Start();
+        };
+
         myThread = new Thread(new ThreadStart(Mine));
         myThread.Start();
         this.currentChain = currentChain;
@@ -31,6 +40,7 @@ public class Mineur
     public void Mine()
     {
         Block block = new Block();
+        currentBlock = block;
         currentChain.InitBlock(ref block);
 
         bool isRunning = true;
@@ -49,7 +59,8 @@ public class Mineur
                 {
                     isRunning = false;
 
-                    new Thread(new ThreadStart(Mine)).Start();
+                    myThread = new Thread(new ThreadStart(Mine));
+                    myThread.Start();
                 }
             }
         }

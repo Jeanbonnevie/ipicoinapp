@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net;
@@ -18,33 +19,33 @@ namespace ipiblockChain
 
         private int Port;
         private string Addr;
+        private BlockChain m_blockChain;
 
         public static event Action<Transaction> OnNewTransactionReceived;
-        public HttpServer(string addr, int port) {
+        public HttpServer(string addr, int port, BlockChain blockChain)
+        {
             this.Addr = addr;
             this.Port = port;
+            m_blockChain = blockChain;
         }
 
-        public static void Init(string Addr, int Port)
+        public static void Init(string Addr, int Port, BlockChain blockChain)
         {
-            var server = new HttpServer(Addr, Port);
-            server.Start();
+            var server = new HttpServer(Addr, Port, blockChain);
+
+            Thread myThread = null;
+            myThread = new Thread(() => {
+                for (int i = 0; i < 100; i++)
+                {
+                    server.Start();
+                }
+            });
         }
 
         public void Start()
         {
             TcpListener listener = new TcpListener(IPAddress.Parse(this.Addr), this.Port);
             listener.Start();
-
-            Thread myThread = null;
-            myThread = new Thread(() => {
-                for (int i = 0; i < 100; i++) 
-                {
-                    OnNewTransactionReceived?.Invoke(Transaction.CreateRandomTransaction());
-                    Thread.Sleep(10);
-                }
-            });
-            myThread.Start();
 
             while (true)
             {
@@ -76,7 +77,7 @@ namespace ipiblockChain
                 if (queryParams.Length > 1)
                 {
                     string[] param = queryParams[1].Split('=');
-                    command = queryParams[0];
+                    command = param[0];
                     if (param.Length > 1) 
                     {
                         blockJSON = param[1];
@@ -101,8 +102,9 @@ namespace ipiblockChain
                 }
                 else if (endpoint == "/newblock" && !string.IsNullOrEmpty(blockJSON) && command == "block")
                 {
+                    blockJSON = WebUtility.UrlDecode(blockJSON);
                     Block block = Block.CreateBlock(blockJSON);
-                    block.GetBiggestBlock(block); // todo : change to correspongin block height
+                    m_blockChain.CheckBlock(block);
                     response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n {OK}";
                 }
                 else if (endpoint == "/newtx" && !string.IsNullOrEmpty(blockJSON) && command == "tx")

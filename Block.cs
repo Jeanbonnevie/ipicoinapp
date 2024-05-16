@@ -96,7 +96,7 @@ public class Block
 
 public static class BlockEntensions
 {
-    public static Block GetBiggestBlock(this Block block_1, Block block_2)
+    public static Block GetBestBlock(this Block block_1, Block block_2)
     {
         if (block_1 == null) return block_2;
         if (block_2 == null) return block_1;
