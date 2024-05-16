@@ -21,7 +21,6 @@ namespace ipiblockChain
         private string Addr;
         private BlockChain m_blockChain;
 
-        public static event Action<Transaction> OnNewTransactionReceived;
         public HttpServer(string addr, int port, BlockChain blockChain)
         {
             this.Addr = addr;
@@ -51,7 +50,7 @@ namespace ipiblockChain
                         HandleClient(client);
                     }
                 });
-                myThread.Start();
+                myThread.Start(); //DavidGoodenought
             }
         }
 
@@ -113,6 +112,7 @@ namespace ipiblockChain
                 {
                     blockJSON = WebUtility.UrlDecode(blockJSON);
                     Transaction transaction = Transaction.CreateTransaction(blockJSON);
+                    m_blockChain.ReceiveTransaction(transaction);
 
                     response = $"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n {OK}";
                 }

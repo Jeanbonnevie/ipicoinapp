@@ -2,41 +2,59 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 public class Client
 {
-    public Client() 
+    public Client()
     {
+        var handler = new HttpClientHandler()
+        {
+            // Disable automatic retries
+            AutomaticDecompression = System.Net.DecompressionMethods.None,
+            AllowAutoRedirect = false,
+            UseDefaultCredentials = false,
+        };
+
+       client = new HttpClient(handler);
     }
 
-    private static HttpClient client = new HttpClient();
+    private static HttpClient client ;
 
-    private const string LOCALHOST = "http://127.0.0.1:9090/";
+    private const string HOST = "http://localhost:9090/"; //TODO :: change for someOne else
     private const string SEND_TRANSACTION = "newtx?tx=";
 
+    private static readonly Object obj = new Object();
     public async void SendTransaction(string transactionJson)
     {
-        string baseUrl = LOCALHOST + SEND_TRANSACTION;
+        lock (obj)
+        {
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json")
+            );
+        }
 
-        string urlWithParams = $"{baseUrl}{transactionJson}";
+        string baseUrl = HOST + SEND_TRANSACTION + transactionJson;
+
         try
         {
-            HttpResponseMessage response = await client.GetAsync(urlWithParams);
-
-            if (response.IsSuccessStatusCode)
-            {
-                string responseContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Response from server: {responseContent}");
-            }
-            else
-            {   
-                Console.WriteLine($"Failed to send request. Status code: {response.StatusCode}");
-            }   
+            await ProcessRepositoriesAsync(client, baseUrl);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            Console.WriteLine( "Issue with send transaction " + ex.ToString() );
+            //Console.WriteLine("Issue with send transaction " + ex.ToString());
         }
+    }
+
+
+    static async Task ProcessRepositoriesAsync(HttpClient client, string command)
+    {
+        var r = await client.GetStringAsync(command);
+
+        Console.WriteLine(r);
     }
 }

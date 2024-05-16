@@ -7,6 +7,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Linq;
 using System.Security.Principal;
+using System.Collections.Concurrent;
 
 namespace ipiblockChain
 {
@@ -14,9 +15,12 @@ namespace ipiblockChain
     {
         private string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ipiblockchain", "blockchain.json");
         private List<Block> blocks;
-        int difficulty = 4;
+        int difficulty = 2;
 
         public event Action<Block> OnExternalBlockModifiesBlockChain;
+        public event Action<List<Transaction>> OnTransactionsReceived;
+
+        private List<Transaction> transactions = new List<Transaction>();
 
         public BlockChain()
         {
@@ -122,6 +126,13 @@ namespace ipiblockChain
                     Console.WriteLine(builder.ToString());
                     block.id = builder.ToString();
                     AddToBlockChain(block);
+                    lock (transactionLock)
+                    {
+                        block.data.ToList().ForEach(t =>
+                        {
+                            transactions.Remove(t);
+                        });
+                    }
                     Console.WriteLine("Block added n°" + block.height);
                     return true;
                 }
@@ -184,6 +195,19 @@ namespace ipiblockChain
                         blocks.Add(bestBlock);
                     }
                 }
+            }
+        }
+
+        private static readonly Object transactionLock = new Object();
+        internal void ReceiveTransaction(Transaction transaction)
+        {
+            lock (transactionLock)
+            {
+                if (transactions.Find(t => t.timestamp == transaction.timestamp) != null) return;
+
+                Console.WriteLine("NEW transaction received ::: " + transactions.Count);
+                transactions.Add(transaction);
+                OnTransactionsReceived?.Invoke(transactions);
             }
         }
     }

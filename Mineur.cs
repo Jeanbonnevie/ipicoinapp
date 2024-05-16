@@ -2,6 +2,7 @@
 using ipiblockChain;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,15 +13,15 @@ public class Mineur
     Block currentBlock;
     private BlockChain currentChain;
 
-    ConcurrentBag<Transaction> availibleTransaction = new ConcurrentBag<Transaction>();
+    List<Transaction> availibleTransaction = new List<Transaction>();
 
     public Mineur(BlockChain currentChain)
     {
         this.currentChain = currentChain;
 
-        HttpServer.OnNewTransactionReceived += t =>
+        currentChain.OnTransactionsReceived += t =>
         {
-            availibleTransaction.Add(t);
+            availibleTransaction.AddRange(t);
         };
 
         currentChain.OnExternalBlockModifiesBlockChain += b =>
@@ -46,11 +47,12 @@ public class Mineur
         bool isRunning = true;
         while (isRunning) // Pas opti DavidGoodenought
         {
-            if(availibleTransaction.TryTake(out Transaction transaction))
-            {
-                block.AddTransaction(transaction);
-            }
-
+            if (availibleTransaction.Count > 0)
+                if (block.data == null)
+                    block.AddTransaction(availibleTransaction.Last());
+                else if (block.data.ToList().Find(t => t.timestamp == availibleTransaction.Last().timestamp) == null)
+                    block.AddTransaction(availibleTransaction.Last());
+           
             block.GenNonce();
 
             if (block.CanBeUsed())
