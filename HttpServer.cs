@@ -33,13 +33,7 @@ namespace ipiblockChain
         {
             var server = new HttpServer(Addr, Port, blockChain);
 
-            Thread myThread = null;
-            myThread = new Thread(() => {
-                for (int i = 0; i < 100; i++)
-                {
-                    server.Start();
-                }
-            });
+            server.Start();
         }
 
         public void Start()
@@ -60,6 +54,7 @@ namespace ipiblockChain
             using (var reader = new StreamReader(stream, Encoding.UTF8))
             using (var writer = new StreamWriter(stream, Encoding.UTF8) { AutoFlush = true })
             {
+
                 string request = await reader.ReadLineAsync();
                 if (request == null) return;
 

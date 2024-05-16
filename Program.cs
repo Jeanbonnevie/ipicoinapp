@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,11 +14,20 @@ namespace ipiblockChain
         {
             BlockChain blockchain = new BlockChain();
             Mineur mineur = new Mineur(blockchain);   
-            HttpServer.Init("0.0.0.0",9090, blockchain);
-            Client client = new Client();
 
-            Simulator simulator = new Simulator(client);
-            simulator.SimulateTransactions();
+            Thread myThread = null;
+            myThread = new Thread(() => {
+                for (int i = 0; i < 100; i++)
+                {
+                    Client client = new Client();
+                    Simulator simulator = new Simulator(client);
+                    simulator.SimulateTransactions();
+                }
+            });
+
+            myThread.Start();
+
+            HttpServer.Init("0.0.0.0", 9090, blockchain);
         }
     }
 }

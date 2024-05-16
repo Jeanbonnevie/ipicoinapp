@@ -9,16 +9,17 @@ public class Client
 
     private static HttpClient sharedClient = new HttpClient()
     {
-        BaseAddress = new Uri("https://localhost:9009"),
+        BaseAddress = new Uri(LOCALHOST),
     };
 
-    private const string SEND_TRANSACTION_LOCALHOST = "https://localhost:9090/";
+    private const string LOCALHOST = "https://127.0.0.1:9090/";
+    private const string SEND_TRANSACTION = "newtx?tx=";
 
     public async void SendTransaction(string transactionJson)
     {
         try
         {
-            string message = SEND_TRANSACTION_LOCALHOST + transactionJson;
+            string message = SEND_TRANSACTION;// + transactionJson;
             HttpResponseMessage response = await sharedClient.GetAsync(
                 message
             );
