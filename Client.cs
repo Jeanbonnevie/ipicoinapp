@@ -26,6 +26,7 @@ public class Client
 
     private const string HOST = "http://localhost:9090/"; //TODO :: change for someOne else
     private const string SEND_TRANSACTION = "newtx?tx=";
+    private const string SEND_BLOCk = "newblock?block=";
 
     private static readonly Object obj = new Object();
     public async void SendTransaction(string transactionJson)
@@ -44,7 +45,29 @@ public class Client
         {
             await ProcessRepositoriesAsync(client, baseUrl);
         }
-        catch (Exception ex)
+        catch (Exception ex) // commenter un debug ça fix le bug?? non ? ??
+        {
+            //Console.WriteLine("Issue with send transaction " + ex.ToString());
+        }
+    }
+
+    public async void SendBlock(string blockJson)
+    {
+        lock (obj)
+        {
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json")
+            );
+        }
+
+        string baseUrl = HOST + SEND_BLOCk + blockJson;
+
+        try
+        {
+            await ProcessRepositoriesAsync(client, baseUrl);
+        }
+        catch (Exception ex) // commenter un debug ça fix le bug?? non ? ??
         {
             //Console.WriteLine("Issue with send transaction " + ex.ToString());
         }
