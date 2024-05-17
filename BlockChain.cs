@@ -15,7 +15,7 @@ namespace ipiblockChain
     {
         private string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ipiblockchain", "blockchain.json");
         private List<Block> blocks;
-        int difficulty = 2;
+        int difficulty = 2; // 2 c'est trop simple, 3 c'est mieux, ça évite de spamme des micro block [5 c'est trop]
 
         public event Action<Block> OnExternalBlockModifiesBlockChain;
         public event Action<List<Transaction>> OnTransactionsReceived;
@@ -66,6 +66,7 @@ namespace ipiblockChain
                 this.blocks.Add(genesisBlock);
                 genesisBlock.id = genesisBlock.GetId();
                 SaveBlockchain();
+
                 Console.WriteLine("Block Genesis added");
             }
         }
@@ -132,6 +133,8 @@ namespace ipiblockChain
                         {
                             transactions.Remove(t);
                         });
+
+                        OnTransactionsReceived(transactions);
                     }
                     Console.WriteLine("Block added n°" + block.height);
                     return true;
@@ -148,7 +151,7 @@ namespace ipiblockChain
             blocks.Add(block);
             SaveBlockchain();
 
-            // Todo :: broadcast to network
+            
         }
 
         private static readonly Object obj = new Object();
@@ -201,14 +204,22 @@ namespace ipiblockChain
         private static readonly Object transactionLock = new Object();
         internal void ReceiveTransaction(Transaction transaction)
         {
+            if (!CheckTransaction(transaction)) return;
+
             lock (transactionLock)
             {
-                if (transactions.Find(t => t.timestamp == transaction.timestamp) != null) return;
-
-                Console.WriteLine("NEW transaction received ::: " + transactions.Count);
                 transactions.Add(transaction);
                 OnTransactionsReceived?.Invoke(transactions);
+                Console.WriteLine("NEW transaction received ::: " + transactions.Count);
             }
+        }
+
+        public bool CheckTransaction(Transaction transaction)
+        {
+            if (transactions.Find(t => t.timestamp == transaction.timestamp) != null) return false;
+
+            //Check if the sender has enought money to send this amount of money
+            return true;
         }
     }
 }

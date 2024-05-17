@@ -14,9 +14,9 @@ public class Simulator
     {
         Thread myThread = null;
         myThread = new Thread(() => {
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 1000; i++)
             {
-                Thread.Sleep(4000);
+                Thread.Sleep(100);
                 var sz = JsonConvert.SerializeObject(Transaction.CreateRandomTransaction());
                  m_client.SendTransaction(sz);
             }

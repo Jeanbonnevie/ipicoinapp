@@ -44,11 +44,8 @@ namespace ipiblockChain
             {
                 Thread myThread = null;
                 myThread = new Thread(() => {
-                    for (int i = 0; i < 100; i++)
-                    {
-                        TcpClient client = listener.AcceptTcpClient();
-                        HandleClient(client);
-                    }
+                    TcpClient client = listener.AcceptTcpClient();
+                    HandleClient(client);
                 });
                 myThread.Start(); //DavidGoodenought
             }

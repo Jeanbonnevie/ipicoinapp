@@ -21,13 +21,12 @@ public class Mineur
 
         currentChain.OnTransactionsReceived += t =>
         {
+            availibleTransaction.Clear();
             availibleTransaction.AddRange(t);
         };
 
         currentChain.OnExternalBlockModifiesBlockChain += b =>
         {
-            //Todo :: synch transactions to never lose any
-
             myThread.Abort();
             myThread = new Thread(new ThreadStart(Mine));
             myThread.Start();

@@ -17,12 +17,9 @@ namespace ipiblockChain
 
             Thread myThread = null;
             myThread = new Thread(() => {
-                for (int i = 0; i < 100; i++)
-                {
-                    Client client = new Client();
-                    Simulator simulator = new Simulator(client);
-                    simulator.SimulateTransactions();
-                }
+                Client client = new Client();
+                Simulator simulator = new Simulator(client);
+                simulator.SimulateTransactions();
             });
 
             myThread.Start();

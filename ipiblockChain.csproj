@@ -51,6 +51,7 @@
     <Compile Include="Block.cs" />
     <Compile Include="BlockChain.cs" />
     <Compile Include="Client.cs" />
+    <Compile Include="ConsoleHandler.cs" />
     <Compile Include="HttpServer.cs" />
     <Compile Include="Mineur.cs" />
     <Compile Include="Program.cs" />
