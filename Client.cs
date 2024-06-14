@@ -6,9 +6,11 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ipiblockChain;
 
 public class Client
 {
+    private BlockChain m_blockChain;
     public Client()
     {
         var handler = new HttpClientHandler()
@@ -71,6 +73,12 @@ public class Client
         {
             //Console.WriteLine("Issue with send transaction " + ex.ToString());
         }
+    }
+
+    public bool CheckBalance(string walletId, float transactionAmount)
+    {
+        float balance = m_blockChain.GetBalance(walletId);
+        return balance >= transactionAmount;
     }
 
 

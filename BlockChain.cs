@@ -221,5 +221,10 @@ namespace ipiblockChain
             //Check if the sender has enought money to send this amount of money
             return true;
         }
+
+        public float GetBalance(string walletId)
+        {
+            return 10000.0f;
+        }
     }
 }
